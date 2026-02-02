@@ -3,24 +3,7 @@ import axios from "axios";
 
 
 const App = () => {
-  const [notes, setNotes] = useState([
-    {
-      title: "Test note",
-      discription: "This is a test discription",
-    },
-    {
-      title: "Test note",
-      discription: "This is a test discription",
-    },
-    {
-      title: "Test note",
-      discription: "This is a test discription",
-    },
-    {
-      title: "Test note",
-      discription: "This is a test discription",
-    },
-  ]);
+  const [notes, setNotes] = useState([]);
 
   axios.get("http://localhost:3000/api/notes")
     .then((res) => {
