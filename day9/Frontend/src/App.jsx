@@ -8,7 +8,7 @@ const App = () => {
   const [currentNoteId, setCurrentNoteId] = useState(null);
 
   function fetchNotes() {
-      axios.get("http://localhost:3000/api/notes").then((res) => {
+      axios.get("https://backend-t0rv.onrender.com/api/notes").then((res) => {
         setNotes(res.data.notes);
       });
   }
@@ -23,7 +23,7 @@ const App = () => {
     const { title, discription } = e.target.elements;
 
     axios
-      .post("http://localhost:3000/api/notes/create", {
+      .post("https://backend-t0rv.onrender.com/api/notes/create", {
         title: title.value,
         discription: discription.value,
       })
@@ -37,11 +37,12 @@ const App = () => {
   }
 
   function deleteNote(id) {
-    axios.delete(`http://localhost:3000/api/note/${id}`)
+    axios
+      .delete(`https://backend-t0rv.onrender.com/api/note/${id}`)
       .then((res) => {
         console.log(res.data);
         fetchNotes();
-    })
+      });
 
   }
 
@@ -49,14 +50,18 @@ const App = () => {
     e.preventDefault();
     const { discription } = e.target.elements;
 
-    axios.patch(`http://localhost:3000/api/note/update/${currentNoteId}`, {
-      discription: discription.value
-    })
+    axios
+      .patch(
+        `https://backend-t0rv.onrender.com/api/note/update/${currentNoteId}`,
+        {
+          discription: discription.value,
+        },
+      )
       .then((res) => {
         discription.value = "";
         setShowForm(false);
         fetchNotes();
-    })
+      });
   }
   
   return (
