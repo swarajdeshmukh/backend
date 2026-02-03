@@ -1,14 +1,20 @@
 const express = require('express');
 const noteModel = require("./models/note.model");
 const cors = require('cors');
+const path = require('path');
 
 const app = express();
+
+
 app.use(express.json());
 app.use(cors());
 
-app.get('/', (req, res) => {
-    res.send("Welcome to server!")
-})
+
+app.use(express.static(path.join("./public")));
+
+// app.get('/', (req, res) => {
+//     res.send("Welcome to server!")
+// })
 
 
 // Create a Note
@@ -71,6 +77,13 @@ app.patch('/api/note/update/:id', async(req, res) => {
         note
     })
 })
+
+
+
+// Wildcard route handler
+app.use("*name", (req, res) => {
+  res.sendFile(path.join(__dirname, "..", "public/index.html"));
+});
 
 
 module.exports = app;

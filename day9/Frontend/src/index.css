@@ -18,6 +18,9 @@ html{
 
 .notes{
   display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
   gap: 1rem;
   padding-block: 1rem;
   padding-inline: 3rem;
@@ -29,4 +32,57 @@ html{
   border-radius: 0.7rem;
   max-width: 20rem;
 
+}
+
+.formContainer{
+  position: relative;
+  padding: 1rem 3rem;
+}
+
+form input{
+  padding: 1rem;
+  border-radius: 0.5rem;
+  border: none;
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+button{
+  padding: 20px 50px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 15px;
+    margin-top: 15px;
+    margin-right: 3px;
+}
+
+button:hover{
+  background-color: rgb(192, 192, 192);
+  color: white;
+  font-weight: bold;
+  transition: all 0.3s ease-in-out;
+
+}
+
+.editFormContainer{
+  height: 100vh;
+  width: 100%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(63, 61, 61, 0.666);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  display: none;
+}
+
+.editFormContainer form{
+  background-color: rgb(152, 148, 148);
+  height: 200px;
+  width: 400px;
+  padding: 20px;
+  border-radius: 10px;
 }
