@@ -53,7 +53,7 @@ authRout.post('/login', async (req, res) => {
     const user = await  userModel.findOne({
         email
     })
-
+    
     if (!user) {
         res.status(404).json({
             message: "User with this email dose not exist"
