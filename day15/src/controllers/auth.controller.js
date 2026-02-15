@@ -45,7 +45,6 @@ async function Register(req, res) {
   });
 }
 
-
 async function Login(req, res){
     const { username, email, password } = req.body
     
@@ -85,6 +84,8 @@ async function Login(req, res){
         token
     })
 }
+
+
 
 
 module.exports = {
