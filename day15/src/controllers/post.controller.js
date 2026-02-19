@@ -5,6 +5,7 @@ const uplodeImage = require('../services/imageKit.service')
 async function createPostController(req, res) {
   const { caption } = req.body;
   
+  // uploade Image function is imageKit servise function
   const file = await uplodeImage(req.file.buffer);
 
   const post = await postModel.create({
