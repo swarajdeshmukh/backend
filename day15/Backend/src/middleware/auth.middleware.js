@@ -17,8 +17,9 @@ async function identifyUser(req, res, next) {
       res.status(401).json({
         message: "Invalid token",
       });
-    }
-    res.user = decoded;
+  }
+
+    req.user = decoded;
     next()
 }
 
