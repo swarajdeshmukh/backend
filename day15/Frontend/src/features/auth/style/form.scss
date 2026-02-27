@@ -1,0 +1,69 @@
+// Reusable Flex Mixin
+@mixin flex-center(
+  $direction: row,
+  $justify: center,
+  $align: center,
+  $gap: 0
+) {
+  display: flex;
+  flex-direction: $direction;
+  justify-content: $justify;
+  align-items: $align;
+  gap: $gap;
+}
+
+main {
+  height: 100vh;
+  width: 100%;
+  
+
+  h1{
+    margin-bottom: 1rem;
+  }
+
+  p{
+    margin-top: 1rem;
+  }
+
+  @include flex-center; // center main content
+
+  .form-container {
+    // height: 20rem;
+    width: 20rem;
+    border-radius: 1rem;
+    padding: 1rem;
+    background-color: rgb(119, 119, 119);
+    border: 1px solid rgb(217, 209, 209);
+
+    @include flex-center(column); // center form-container content
+
+    form {
+      width: 100%;
+      @include flex-center(
+        $direction: column,
+        $justify: center,
+        $align: stretch, // IMPORTANT: allows input to take full width
+        $gap: 20px
+      );
+
+      input {
+        width: 100%;
+        padding: 1rem;
+        border-radius: 0.25rem;
+        border: none;
+      }
+
+      button{
+        width: 100%;
+        padding: 1rem;
+        background-color: rgb(90, 90, 240);
+        border: 1px solid rgba(255, 255, 255, 0.574);
+        color: white;
+        font-size: 1rem;
+        font-weight: 500;
+        cursor: pointer;
+        border-radius: 0.25rem;
+      }
+    }
+  }
+}

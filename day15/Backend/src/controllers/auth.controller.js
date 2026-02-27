@@ -2,7 +2,7 @@ const userModel = require("../models/user.model");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-async function Register(req, res) {
+async function registerController(req, res) {
   const { username, email, password, bio, profileImage } = req.body;
   const isUserExist = await userModel.findOne({
     $or: [{ username }, { email }],
@@ -46,7 +46,7 @@ async function Register(req, res) {
   });
 }
 
-async function Login(req, res){
+async function loginController(req, res){
     const { username, email, password } = req.body
     
     const user = await userModel.findOne({
@@ -65,7 +65,7 @@ async function Login(req, res){
         });
     }
 
-    const isPassword =  bcrypt.compare(password, user.password)
+    const isPassword = await bcrypt.compare(password, user.password)
     
     if (!isPassword) {
         return res.status(401).json({
@@ -92,9 +92,26 @@ async function Login(req, res){
 }
 
 
+async function getMeController(req, res) {
+  const userId = req.user.id;
+
+  const user = await userModel.findById(userId)
+
+  res.status(200).json({
+    user: {
+      username: user.username,
+      email: user.email,
+      bio: user.bio,
+      profileImage: user.profileImage
+    }
+  })
+
+}
+
 
 
 module.exports = {
-  Register,
-  Login,
+  registerController,
+  loginController,
+  getMeController,
 };
