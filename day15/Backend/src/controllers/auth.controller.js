@@ -65,7 +65,7 @@ async function Login(req, res){
         });
     }
 
-    const isPassword = bcrypt.compare(password, user.password)
+    const isPassword =  bcrypt.compare(password, user.password)
     
     if (!isPassword) {
         return res.status(401).json({
