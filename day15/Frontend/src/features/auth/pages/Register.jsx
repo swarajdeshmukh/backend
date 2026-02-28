@@ -2,6 +2,7 @@ import "../style/form.scss";
 import { Link } from "react-router";
 import { useAuth } from "../hooks/useAuth";
 import { useState } from "react";
+import { useNavigate } from "react-router";
 
 const Register = () => {
 
@@ -9,15 +10,23 @@ const Register = () => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
 
+  const navigate = useNavigate();
 
-    const { handleRegister } = useAuth();
+  const { handleRegister, loading } = useAuth();
+  
+  if (loading) {
+    return (
+      <h1>Loading...</h1>
+    )
+  }
 
     async function submitHandler(e) {
         e.preventDefault();
 
         handleRegister(username, email, password)
             .then(res => {
-                console.log(res)
+              console.log(res)
+              navigate('/')
             });
 
         setUsername('');

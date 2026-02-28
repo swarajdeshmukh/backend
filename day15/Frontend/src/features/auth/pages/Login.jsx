@@ -55,7 +55,7 @@ const Login = () => {
           <button type="submit">Login</button>
         </form>
 
-        <p>
+        <p className="disc">
           Don't have an account? <Link to="/register">Register</Link>
         </p>
       </div>
