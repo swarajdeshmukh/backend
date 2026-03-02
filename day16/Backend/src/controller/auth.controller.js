@@ -1,7 +1,9 @@
+const backlistModel = require("../models/blacklistToken.model");
 const userModel = require("../models/user.model");
 const jwt = require("jsonwebtoken");
+const redis = require('../config/cache')
 
-async function register(req, res) {
+async function registerController(req, res) {
   try {
     const { email, username, password } = req.body;
 
@@ -58,7 +60,7 @@ async function register(req, res) {
   }
 }
 
-async function login(req, res) {
+async function loginController(req, res) {
   try {
     const { email, username, password } = req.body;
 
@@ -76,7 +78,7 @@ async function login(req, res) {
 
     if (!user) {
       return res.status(404).json({
-        message: "User not found",
+        message: "Invalid credentials",
       });
     }
 
@@ -111,7 +113,32 @@ async function login(req, res) {
   }
 }
 
+async function getMeController(req, res) {
+  const userId = req.user.id;
+  const user = await userModel.findById(userId)
+
+  res.status(200).json({
+    message: "User get successfully",
+    user
+  })
+}
+
+async function logoutController(req, res) {
+  const token = req.cookies.token;
+
+  res.clearCookie("token")
+
+  await redis.set(token, Date.now().toString(), 'EX', 60*60)
+
+  res.status(200).json({
+    message: "Logged out successfully"
+  })
+  
+}
+
 module.exports = {
-  register,
-  login,
+  registerController,
+  loginController,
+  getMeController,
+  logoutController,
 };
