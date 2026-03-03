@@ -21,11 +21,6 @@ const Login = () => {
         handleLogin(email, password)
             .then(res => {
                 console.log(res)
-
-                 if (!res) {
-                   alert("Login failed");
-                   return;
-                 }
                 navigate('/')
                 
         })

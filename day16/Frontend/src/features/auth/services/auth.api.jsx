@@ -22,15 +22,33 @@ export async function register(email, username, password) {
   }
 }
 
-export async function login(email, password) {
-    try {
-        const { data } = await api.post("/login", {
-          email,
-          password,
-        });
-        return data;
-    } catch (error) {
-        console.log(error)
-    }
-    
+export async function login(email, username, password) {
+  try {
+    const { data } = await api.post("/login", {
+      email,
+      username,
+      password,
+    });
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function getMe() {
+  try {
+    const { data } = await api.get("/getMe");
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function logout() {
+  try {
+    const { data } = await api.get("/logout");
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
 }

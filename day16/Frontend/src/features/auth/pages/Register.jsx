@@ -24,10 +24,6 @@ const Register = () => {
     handleRegister(email, username, password)
       .then(res => {
         console.log(res)
-        if (!res) {
-          alert("Registration failed");
-          return;
-        }
         navigate('/')
         
     })
