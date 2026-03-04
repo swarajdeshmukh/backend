@@ -70,14 +70,12 @@ async function loginController(req, res) {
       });
     }
 
-    const user = await userModel
-      .findOne({
-        $or: [{ email }, { username }],
-      })
-      .select("+password");
+    const query = email ? { email } : { username };
+
+    const user = await userModel.findOne(query).select("+password");
 
     if (!user) {
-      return res.status(404).json({
+      return res.status(401).json({
         message: "Invalid credentials",
       });
     }
@@ -94,11 +92,15 @@ async function loginController(req, res) {
       expiresIn: "3d",
     });
 
-    res.cookie("token", token);
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 3 * 24 * 60 * 60 * 1000,
+    });
 
     res.status(200).json({
       message: "User Login successful",
-      token,
       user: {
         id: user._id,
         email: user.email,
