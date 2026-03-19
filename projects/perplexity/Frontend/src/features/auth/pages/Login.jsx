@@ -16,7 +16,7 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // replace with real login API call
+    //Login API call
     const payload = {
       email,
       password,
