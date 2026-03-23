@@ -4,9 +4,8 @@ import { useSelector } from "react-redux";
 import { useChat } from "../hooks/useChat";
 import remarkGfm from "remark-gfm";
 import { GoSidebarExpand, GoSidebarCollapse } from "react-icons/go";
+import { FaPlus } from "react-icons/fa";
 import { IoMdChatbubbles } from "react-icons/io";
-
-
 
 const Dashboard = () => {
   const chat = useChat();
@@ -14,6 +13,7 @@ const Dashboard = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const chats = useSelector((state) => state.chat.chats);
   const currentChatId = useSelector((state) => state.chat.currentChatId);
+  const loading = useSelector((state) => state.chat.loading);
 
   useEffect(() => {
     chat.initializeSocketConnection();
@@ -40,13 +40,12 @@ const Dashboard = () => {
     <main className="h-screen w-full bg-[#07090f] text-white">
       <section className="mx-auto flex h-screen w-full gap-4 rounded-3xl border  p-1 md:gap-6 md:p-1 border-none">
         <aside
-          className={`h-full flex flex-col overflow-y-hidden-auto  justify-between shrink-0 bg-[#1c212c] p-4 
+          className={`h-full flex flex-col overflow-y-hidden-auto  shrink-0 bg-[#1c212c] p-4 
   transition-[width] duration-300 ease-in-out
   ${isCollapsed ? "w-20" : "w-72"} 
   hidden md:flex`}
         >
-          <div className="flex items-center justify-start flex-col">
-
+          <div className="flex items-center ">
             {/* Title */}
             <div className="flex items-start gap-2 mb-5 overflow-hidden">
               <svg
@@ -69,42 +68,56 @@ const Dashboard = () => {
                 Perplexity
               </h1>
             </div>
-
-            {/* Chats */}
-            <div className="space-y-2 overflow-auto">
-              {Object.values(chats).map((chat, index) => (
-                <button
-                  onClick={() => openChat(chat.id)}
-                  key={index}
-                  type="button"
-                  className="flex items-center gap-2 w-full cursor-pointer rounded-xl border overflow-x-hidden border-white/60 bg-transparent px-3 py-2 text-left text-base font-medium text-white/90 hover:border-white hover:text-white transition duration-150"
-                >
-                  <IoMdChatbubbles className="text-xl shrink-0" />
-
-                  {/* Animated text */}
-                  <span
-                    className={`whitespace-nowrap transition-all duration-200
-            ${isCollapsed ? "opacity-0 w-0 overflow-hidden" : "opacity-100 w-auto"}`}
-                  >
-                    {chat.title}
-                  </span>
-                </button>
-              ))}
-            </div>
           </div>
 
-          {/* Toggle */}
-          <div className="flex justify-end">
-            <button
-              onClick={() => setIsCollapsed(!isCollapsed)}
-              className="text-white transition-transform duration-300 hover:scale-110"
-            >
-              {isCollapsed ? (
-                <GoSidebarCollapse className="text-2xl" />
-              ) : (
-                <GoSidebarExpand className="text-2xl" />
-              )}
-            </button>
+          <div className="h-full flex flex-col justify-between">
+            <div className="flex items-center justify-start flex-col gap-3">
+              <button
+                className=" rounded-xl py-3 px-4 w-full font-bold flex items-center justify-center gap-2 bg-blue-500 transition duration-200 hover:bg-white/20 cursor-pointer"
+                onClick={() => {
+                  chat.handleOpenChat(null, chats);
+                }}
+              >
+                <span>New</span>
+                <FaPlus className="" />
+              </button>
+
+              {/* Chats */}
+              <div className="space-y-2 overflow-auto">
+                {Object.values(chats).map((chat, index) => (
+                  <button
+                    onClick={() => openChat(chat.id)}
+                    key={index}
+                    type="button"
+                    className="flex items-center gap-2 w-full cursor-pointer rounded-xl border overflow-x-hidden border-white/60 bg-transparent px-3 py-2 text-left text-base font-medium text-white/90 hover:border-white hover:text-white transition duration-150"
+                  >
+                    <IoMdChatbubbles className="text-xl shrink-0" />
+
+                    {/* Animated text */}
+                    <span
+                      className={`whitespace-nowrap transition-all duration-200
+            ${isCollapsed ? "opacity-0 w-0 overflow-hidden" : "opacity-100 w-auto"}`}
+                    >
+                      {chat.title}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Toggle */}
+            <div className="flex justify-end">
+              <button
+                onClick={() => setIsCollapsed(!isCollapsed)}
+                className="text-white transition-transform duration-300 hover:scale-110"
+              >
+                {isCollapsed ? (
+                  <GoSidebarCollapse className="text-2xl" />
+                ) : (
+                  <GoSidebarExpand className="text-2xl" />
+                )}
+              </button>
+            </div>
           </div>
         </aside>
 
@@ -151,7 +164,13 @@ const Dashboard = () => {
                 )}
               </div>
             ))}
+            {loading && (
+              <div className="mr-auto px-4 py-2 rounded-lg bg-white/10 w-fit">
+                <span className="animate-pulse">AI is typing...</span>
+              </div>
+            )}
           </div>
+          
 
           <footer className="rounded-3xl rounded-br-none rounded-bl-none w-full absolute bottom-0 overflow-hidden bg-[#212531] p-4 md:p-4">
             <form
