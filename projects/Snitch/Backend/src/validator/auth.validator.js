@@ -28,8 +28,6 @@ export const validateRegisterUser = [
     .withMessage("Full name must be at least 3 characters long"),
 
   body("password")
-    .notEmpty()
-    .withMessage("Password is required")
     .isLength({ min: 6 })
     .withMessage("Password must be at least 6 characters long"),
 
@@ -48,8 +46,6 @@ export const validateLoginUser = [
     .isEmail()
     .withMessage("Invalid email"),
   body("password")
-    .notEmpty()
-    .withMessage("Password is required")
     .isLength({ min: 6 })
     .withMessage("Password must be at least 6 characters long"),
 
