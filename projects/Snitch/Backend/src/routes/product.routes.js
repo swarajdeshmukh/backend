@@ -24,7 +24,8 @@ const upload = multer({
 router.post(
   "/",
   authenticateSeller,
-  validateCreateProduct, upload.array("images", 7),
+  upload.array("images", 7),
+  validateCreateProduct,
   createProduct,
 );
 
