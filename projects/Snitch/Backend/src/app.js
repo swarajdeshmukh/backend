@@ -9,6 +9,7 @@ import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 // Internal imports
 import { config } from "./config/config.js";
 import authRouter from "./routes/auth.routes.js";
+import produtRouter from './routes/product.routes.js'
 const app = express();
 
 // Middlewares
@@ -42,5 +43,6 @@ app.get("/", (req, res) => {
 
 // Auth API
 app.use("/api/auth", authRouter);
+app.use("/api/products", produtRouter);
 
 export default app;
