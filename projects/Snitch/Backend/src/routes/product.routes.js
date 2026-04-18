@@ -2,7 +2,7 @@ import { Router } from "express";
 import multer from "multer"
 
 import { authenticateSeller } from "../middlewares/auth.middleware.js";
-import { createProduct, getSellerProducts } from "../controllers/product.controller.js";
+import { createProduct, getAllProducts, getProductById, getSellerProducts } from "../controllers/product.controller.js";
 import { validateCreateProduct } from "../validator/product.validator.js";
 
 const router = Router();
@@ -37,6 +37,21 @@ router.post(
 
 router.get("/seller", authenticateSeller, getSellerProducts);
 
+/**
+ * @route GET /api/products
+ * @description Get all PRoducts
+ * @access Public
+ */
+router.get("/", getAllProducts);
+
+
+/**
+ * @route GET /api/products/:id
+ * @description Get product by its id
+ * @access public
+ */
+
+router.get("/:id", getProductById);
 
 
 

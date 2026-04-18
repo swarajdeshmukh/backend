@@ -118,3 +118,20 @@ export const googleCallback = async (req, res) => {
 
 }
 
+
+export const getMe = async (req, res) => {
+  const user = req.user;
+  
+  res.status(200).json({
+    success: true,
+    message: "User fetched successfully",
+    user: {
+      id: user._id,
+      email: user.email,
+      contact: user.contact,
+      fullname: user.fullname,
+      role: user.role
+    }
+  })
+}
+

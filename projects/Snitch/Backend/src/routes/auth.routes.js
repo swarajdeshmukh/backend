@@ -2,7 +2,8 @@ import { Router } from 'express'
 import passport from 'passport';
 
 import { validateLoginUser, validateRegisterUser } from '../validator/auth.validator.js';
-import {googleCallback, login, register} from '../controllers/auth.controller.js'
+import {getMe, googleCallback, login, register} from '../controllers/auth.controller.js'
+import { authenticateUser } from '../middlewares/auth.middleware.js';
 
 const router = Router()
 
@@ -18,5 +19,8 @@ router.get(
   passport.authenticate("google", { session: false, failureRedirect: "http://localhost:5173/login"}),
   googleCallback,
 );
+
+
+router.get("/me", authenticateUser, getMe);
 
 export default router;
