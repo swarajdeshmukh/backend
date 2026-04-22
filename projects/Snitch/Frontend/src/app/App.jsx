@@ -13,9 +13,8 @@ const App = () => {
 
   useEffect(() => {
     handleGetMe()
-  },[])
-
-  console.log(user)
+  }, [])
+  
   return (
     <>
       <RouterProvider router={routes} />

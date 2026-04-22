@@ -10,8 +10,7 @@ const Dashboard = () => {
   useEffect(() => {
     handleGetSellerProduct();
   }, []);
-
-  console.log(sellerProducts);
+  
     return (
       <>
         {/* Google Fonts */}
@@ -103,6 +102,7 @@ const Dashboard = () => {
                   return (
                     <div
                       key={product._id}
+                      onClick={()=> {navigate(`/seller/product/${product._id}`);}}
                       className="group cursor-pointer flex flex-col"
                     >
                       {/* Image Container */}

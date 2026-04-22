@@ -2,7 +2,7 @@ import { useDispatch } from "react-redux"
 
 
 import { setsellerProducts, setProducts, setProduct } from "../state/product.slice.js";
-import { createProduct, getAllProducts, getProductById, getSellerProducts } from "../services/products.api.js";
+import { addProductVariant, createProduct, getAllProducts, getProductById, getSellerProducts } from "../services/products.api.js";
 
 export const useProduct = () => {
     const dispatch = useDispatch();
@@ -26,6 +26,12 @@ export const useProduct = () => {
     async function handleGetProductById(id) {
         const data = await getProductById(id);
         dispatch(setProduct(data.product))
+        return data.products;
+    }
+
+    async function handleAddProductVariant(id, newProductVariant) {
+      const data = await addProductVariant(id, newProductVariant);
+      return data;
     }
 
     return {
@@ -33,5 +39,6 @@ export const useProduct = () => {
       handleGetSellerProduct,
       handleGetAllProducts,
       handleGetProductById,
+      handleAddProductVariant,
     };
 }

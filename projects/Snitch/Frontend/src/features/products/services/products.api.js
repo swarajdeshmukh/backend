@@ -5,26 +5,38 @@ const productApiInstance = axios.create({
   withCredentials: true,
 });
 
-
 export async function createProduct(formData) {
-    const response = await productApiInstance.post("/", formData);
-    return response.data;
+  const response = await productApiInstance.post("/", formData);
+  return response.data;
 }
-
 
 export async function getSellerProducts() {
-    const response = await productApiInstance.get("/seller");
-    return response.data;
+  const response = await productApiInstance.get("/seller");
+  return response.data;
 }
-
 
 export async function getAllProducts() {
-    const response = await productApiInstance.get("/");
-    return response.data;
+  const response = await productApiInstance.get("/");
+  return response.data;
 }
 
-
 export async function getProductById(id) {
-    const response = await productApiInstance.get(`/${id}`);
-    return response.data;
+  const response = await productApiInstance.get(`/${id}`);
+  return response.data;
+}
+
+export async function addProductVariant(id, newProductVariant) {
+    const formData = new FormData();
+
+    newProductVariant.images.array.forEach((image) => {
+        formData.append(`images`, image.file)
+    });
+
+    formData.append("stock", newProductVariant.stock);
+    formData.append("priceAmount", newProductVariant.price.amount);
+    formData.append("attributes", JSON.stringify(newProductVariant.attributes))
+
+    const response = await productApiInstance.post(`/${id}/variants`, formData)
+
+    return response;
 }

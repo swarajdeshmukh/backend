@@ -113,9 +113,6 @@ export const googleCallback = async (req, res) => {
 
   res.cookie("token", token)
   res.redirect("http://localhost:5173/");
-
-  // console.log(req.user)
-
 }
 
 
