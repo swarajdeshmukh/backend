@@ -25,18 +25,25 @@ export async function getProductById(id) {
   return response.data;
 }
 
-export async function addProductVariant(id, newProductVariant) {
-    const formData = new FormData();
+export async function addProductVariant(id, variantData) {
+  const response = await productApiInstance.post(
+    `/${id}/variants`,
+    variantData,
+  );
+  return response.data;
+}
 
-    newProductVariant.images.array.forEach((image) => {
-        formData.append(`images`, image.file)
-    });
+export async function updateProductVariant(id, variantId, updateData) {
+  const response = await productApiInstance.put(
+    `/${id}/variants/${variantId}`,
+    updateData,
+  );
+  return response.data;
+}
 
-    formData.append("stock", newProductVariant.stock);
-    formData.append("priceAmount", newProductVariant.price.amount);
-    formData.append("attributes", JSON.stringify(newProductVariant.attributes))
-
-    const response = await productApiInstance.post(`/${id}/variants`, formData)
-
-    return response;
+export async function deleteProductVariant(id, variantId) {
+  const response = await productApiInstance.delete(
+    `/${id}/variants/${variantId}`,
+  );
+  return response.data;
 }

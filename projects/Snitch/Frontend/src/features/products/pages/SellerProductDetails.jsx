@@ -8,8 +8,6 @@ const SellerProductDetails = () => {
   const navigate = useNavigate();
   const product = useSelector((state) => state.products.product);
   const { handleGetProductById, handleAddProductVariant } = useProduct();
-  const initializationRef = useRef(false);
-
   // Variant form state
   const [showVariantForm, setShowVariantForm] = useState(false);
   const [variantForm, setVariantForm] = useState({
@@ -20,7 +18,8 @@ const SellerProductDetails = () => {
       currency: "INR",
     },
     selectedImages: [],
-    uploadedImages: [], // Store uploaded images
+    uploadedImages: [], // preview strings for new uploads
+    uploadedFiles: [], // actual File objects for upload
   });
   const [attributeKey, setAttributeKey] = useState("");
   const [attributeValue, setAttributeValue] = useState("");
@@ -34,15 +33,10 @@ const SellerProductDetails = () => {
 
   // Initialize variants from product data when it loads
   useEffect(() => {
-    if (product?.variants && !initializationRef.current) {
-      initializationRef.current = true;
-      // Defer state update to avoid cascading render warning
-      const timer = setTimeout(() => {
-        setVariants(product.variants);
-      }, 0);
-      return () => clearTimeout(timer);
+    if (product?.variants) {
+      setVariants(product.variants);
     }
-  }, [product]);
+  }, [product?.variants]);
 
   const handleAddAttribute = () => {
     if (attributeKey && attributeValue) {
@@ -83,6 +77,7 @@ const SellerProductDetails = () => {
         setVariantForm((prev) => ({
           ...prev,
           uploadedImages: [...prev.uploadedImages, reader.result],
+          uploadedFiles: [...prev.uploadedFiles, file],
         }));
       };
       reader.readAsDataURL(file);
@@ -93,6 +88,7 @@ const SellerProductDetails = () => {
     setVariantForm((prev) => ({
       ...prev,
       uploadedImages: prev.uploadedImages.filter((_, i) => i !== index),
+      uploadedFiles: prev.uploadedFiles.filter((_, i) => i !== index),
     }));
   };
 
@@ -115,42 +111,47 @@ const SellerProductDetails = () => {
       return;
     }
 
-    await handleAddProductVariant(id, variantForm);
+    try {
+      const formData = new FormData();
 
-    const newVariant = {
-      _id: `variant_${Date.now()}`,
-      images: (variantForm.uploadedImages.length > 0
-        ? variantForm.uploadedImages
-        : variantForm.selectedImages.length > 0
-          ? variantForm.selectedImages
-          : []
-      ).map((url) => ({ url })),
-      stock: variantForm.stock ? Number(variantForm.stock) : 0,
-      attributes: variantForm.attributes,
-      price: variantForm.price.amount
-        ? {
-            amount: Number(variantForm.price.amount),
-            currency: variantForm.price.currency,
-          }
-        : null,
-    };
+      variantForm.uploadedFiles.forEach((file) => {
+        formData.append("images", file);
+      });
 
-    if (editingVariantId) {
-      setVariants((prev) =>
-        prev.map((v) => (v._id === editingVariantId ? newVariant : v)),
+      formData.append(
+        "selectedImages",
+        JSON.stringify(variantForm.selectedImages),
       );
-      setEditingVariantId(null);
-    } else {
-      setVariants((prev) => [...prev, newVariant]);
+      formData.append("stock", variantForm.stock || 0);
+      formData.append("priceAmount", variantForm.price.amount || "");
+      formData.append("priceCurrency", variantForm.price.currency || "INR");
+      formData.append("attributes", JSON.stringify(variantForm.attributes));
+
+      const data = await handleAddProductVariant(id, formData);
+      const newVariant = data?.variant ?? data;
+
+      if (editingVariantId) {
+        setVariants((prev) =>
+          prev.map((v) => (v._id === editingVariantId ? newVariant : v)),
+        );
+        setEditingVariantId(null);
+      } else {
+        setVariants((prev) => [...prev, newVariant]);
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Unable to add variant. Please try again.");
+      return;
     }
 
     // Reset form
     setVariantForm({
       attributes: {},
-      stock: 0,
+      stock: "",
       price: { amount: "", currency: "INR" },
       selectedImages: [],
       uploadedImages: [],
+      uploadedFiles: [],
     });
     setShowVariantForm(false);
   };
@@ -162,6 +163,7 @@ const SellerProductDetails = () => {
       price: variant.price || { amount: "", currency: "INR" },
       selectedImages: [],
       uploadedImages: variant.images?.map((img) => img.url) || [],
+      uploadedFiles: [],
     });
     setEditingVariantId(variant._id);
     setShowVariantForm(true);

@@ -1,19 +1,26 @@
 import { Router } from "express";
-import multer from "multer"
+import multer from "multer";
 
 import { authenticateSeller } from "../middlewares/auth.middleware.js";
-import { addProductVariants, createProduct, getAllProducts, getProductById, getSellerProducts } from "../controllers/product.controller.js";
+import {
+  addProductVariants,
+  createProduct,
+  getAllProducts,
+  getProductById,
+  getSellerProducts,
+  updateProductVariant,
+  deleteProductVariant,
+} from "../controllers/product.controller.js";
 import { validateCreateProduct } from "../validator/product.validator.js";
 
 const router = Router();
 
-
 const upload = multer({
-    storage: multer.memoryStorage(),
-    limits: {
-        fieldSize: 5 * 1024 * 1024 //5MB
-    }
-})
+  storage: multer.memoryStorage(),
+  limits: {
+    fieldSize: 5 * 1024 * 1024, //5MB
+  },
+});
 
 /**
  * @route POST /api/products
@@ -44,7 +51,6 @@ router.get("/seller", authenticateSeller, getSellerProducts);
  */
 router.get("/", getAllProducts);
 
-
 /**
  * @route GET /api/products/:id
  * @description Get product by its id
@@ -64,6 +70,18 @@ router.post(
   authenticateSeller,
   upload.array("images", 7),
   addProductVariants,
+);
+
+router.put(
+  "/:id/variants/:variantId",
+  authenticateSeller,
+  updateProductVariant,
+);
+
+router.delete(
+  "/:id/variants/:variantId",
+  authenticateSeller,
+  deleteProductVariant,
 );
 
 export default router;
