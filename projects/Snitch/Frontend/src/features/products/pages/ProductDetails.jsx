@@ -20,6 +20,8 @@ const ProductDetails = () => {
   const images = product?.images || [];
   const currentImage =
     images[selectedImageIndex]?.url || "/snitch_editorial_warm.png";
+  
+  console.log(product);
 
   return (
     <>

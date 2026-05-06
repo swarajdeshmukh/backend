@@ -75,7 +75,6 @@ export async function getProductById(req, res) {
 
 export async function addProductVariants(req, res) {
   const { id } = req.params;
-  console.log(id);
 
   const product = await productModel.findOne({
     _id: id,

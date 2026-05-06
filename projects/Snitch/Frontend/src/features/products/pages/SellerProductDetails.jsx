@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { useProduct } from "../hooks/useProduct";
 import { useParams, useNavigate } from "react-router";
 import { useSelector } from "react-redux";
@@ -6,8 +6,10 @@ import { useSelector } from "react-redux";
 const SellerProductDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+
   const product = useSelector((state) => state.products.product);
   const { handleGetProductById, handleAddProductVariant } = useProduct();
+  
   // Variant form state
   const [showVariantForm, setShowVariantForm] = useState(false);
   const [variantForm, setVariantForm] = useState({
@@ -524,7 +526,7 @@ const SellerProductDetails = () => {
                         Attributes (e.g., Size, Color)
                       </label>
 
-                      <div className="flex gap-3 mb-4">
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
                         <input
                           type="text"
                           placeholder="Attribute name (e.g., Size)"
