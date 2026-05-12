@@ -1,8 +1,15 @@
 import express from "express";
 import morgan from "morgan";
 
+import path from "path";
+import { fileURLToPath } from "url";
+
 const app = express();
 app.use(morgan("dev"));
+app.use(express.json());
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 app.get("/api/health", (req, res) => {
   res.status(200).json({
@@ -41,6 +48,8 @@ app.get("/api/user", (req, res) => {
         user,
     })
 });
+
+app.use(express.static(path.join(__dirname, "public")));
 
 app.listen(3000, () => {
   console.log("Server is running on port 3000");

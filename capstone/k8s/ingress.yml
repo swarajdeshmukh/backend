@@ -1,18 +1,18 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: express-app
+  name: codespace-ingress
   labels:
-    app.kubernetes.io/name: express-app
+    app.kubernetes.io/name: codespace-ingress
 spec:
   ingressClassName: nginx
   rules:
-  - http:
+   - http:
       paths:
       - pathType: Prefix
-        path: "/"
+        path: "/api/sandbox"
         backend:
-          service:  
-            name: main-server-service
+          service:
+            name: sandbox-service
             port: 
               number: 80
