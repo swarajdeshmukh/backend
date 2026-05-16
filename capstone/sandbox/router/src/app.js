@@ -6,11 +6,11 @@ const app = express();
 app.use(morgan("combined"));
 
 app.get("/api/status/healthz", (req, res) => {
-    res.status(200).json({
-        message: "Sandbox Router is healthy!",
-        status: "OK",
-    })
-})
+  res.status(200).json({
+    message: "Sandbox Router is healthy!",
+    status: "OK",
+  });
+});
 
 app.get("/api/status/readyz", (req, res) => {
   res.status(200).json({
@@ -19,29 +19,49 @@ app.get("/api/status/readyz", (req, res) => {
   });
 });
 
-
 const proxies = {};
+const agentProxies = {};
 
 function getProxy(sandboxId) {
+  const target = `http://sandbox-service-${sandboxId}`;
 
-    const target = `http://sandbox-service-${sandboxId}`;
-    
-    if (!proxies[sandboxId]) {
-        proxies[sandboxId] = createProxyMiddleware({
-            target,
-            changeOrigin: true,
-            ws: true,
-        })
-    }
-    return proxies[sandboxId];
+  if (!proxies[sandboxId]) {
+    proxies[sandboxId] = createProxyMiddleware({
+      target,
+      changeOrigin: true,
+      ws: true,
+    });
+  }
+  return proxies[sandboxId];
 }
 
+function getAgentProxy(sandboxId) {
+  const target = `http://sandbox-service-${sandboxId}:3000`;
+
+  if (!agentProxies[sandboxId]) {
+    agentProxies[sandboxId] = createProxyMiddleware({
+      target,
+      changeOrigin: true,
+      ws: true,
+    });
+  }
+  return agentProxies[sandboxId];
+}
 
 app.use((req, res, next) => {
-    const host = req.headers.host;
-    const sandboxId = host.split(".")[0];
-    
-   return getProxy(sandboxId)(req, res, next);
+  const host = req.headers.host;
+  const sandboxId = host.split(".")[0];
+
+  /**
+   * pod1.preview.localhost
+   * pod2.agent.localhost
+   */
+
+  if (host.split(".")[1] === "agent") {
+    return getAgentProxy(sandboxId)(req, res, next);
+  } else if (host.split(".")[1] === "preview") {
+    return getProxy(sandboxId)(req, res, next);
+  }
 });
 
 export default app;
