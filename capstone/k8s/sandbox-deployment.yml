@@ -3,21 +3,16 @@ kind: Deployment
 metadata:
   name:  sandbox-deployment
   labels:
-    name: sandbox-deployment
+    name:  sandbox-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: sandbox 
-  strategy:
-    rollingUpdate:
-      maxSurge: 1
-      maxUnavailable: 1
-    type: RollingUpdate
+      app: sandbox
   template:
     metadata:
       labels:
-        app:  sandbox
+        app: sandbox
     spec:
       serviceAccountName: resource-manager
       containers:
@@ -46,4 +41,4 @@ spec:
         ports:
         - containerPort:  3000
           name:  main-sandbox
-
+      
