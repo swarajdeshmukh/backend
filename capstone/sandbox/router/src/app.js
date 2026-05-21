@@ -1,6 +1,11 @@
 import express from "express";
-import { createProxyMiddleware } from "http-proxy-middleware";
 import morgan from "morgan";
+import { createProxyMiddleware } from "http-proxy-middleware";
+import http from "http";
+import { createProxyServer } from "httpxy";
+// import { refreshTTL } from "./config/redis.js";
+
+
 const app = express();
 
 app.use(morgan("combined"));
@@ -48,6 +53,14 @@ function getAgentProxy(sandboxId) {
   return agentProxies[sandboxId];
 }
 
+
+// Single httpxy proxy server for all WebSocket upgrades
+const wsProxy = createProxyServer({ changeOrigin: true });
+wsProxy.on('error', (err, req, socket) => {
+    console.error('WS proxy error:', err.message);
+    socket?.destroy();
+});
+
 app.use((req, res, next) => {
   const host = req.headers.host;
   const sandboxId = host.split(".")[0];
@@ -64,4 +77,37 @@ app.use((req, res, next) => {
   }
 });
 
-export default app;
+// Create the HTTP server explicitly
+const server = http.createServer(app);
+
+server.on('upgrade', (req, socket, head) => {
+    const host = req.headers.host;
+    if (!host) { socket.destroy(); return; }
+
+    // Prevent EPIPE and connection-reset errors from crashing the process
+    // during the active piped session (after ws() Promise has resolved)
+    socket.on('error', () => socket.destroy());
+
+    const sandboxId = host.split('.')[ 0 ];
+    const type = host.split('.')[ 1 ];
+
+    console.log(`WS upgrade request: ${host}, sandboxId: ${sandboxId}, type: ${type}`);
+
+    if (type === 'agent') {
+        wsProxy
+          .ws(
+            req,
+            socket,
+            { target: `http://sandbox-service-${sandboxId}:3000` },
+            head,
+          )
+          .catch(() => socket.destroy());
+    } else if (type === 'preview') {
+        wsProxy.ws(req, socket, { target: `http://sandbox-service-${sandboxId}` }, head)
+            .catch(() => socket.destroy());
+    } else {
+        socket.destroy();
+    }
+});
+
+export default server;
